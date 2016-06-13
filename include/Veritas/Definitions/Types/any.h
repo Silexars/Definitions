@@ -25,6 +25,8 @@ namespace Veritas {
         private:
             class Content {
                 public:
+                    virtual ~Content() = default;
+
                     virtual const std::type_info& type() const = 0;
 
                     virtual Content* clone() const = 0;
