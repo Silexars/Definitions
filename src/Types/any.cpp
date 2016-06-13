@@ -3,7 +3,7 @@
 using Veritas::any;
 
 any::any() : content(0) {}
-any::any(any& a) : content(a.content->clone()) {}
+any::any(const any& a) : content(0) { operator=(a); }
 any::any(any&& a) : content(a.content) { a.content = 0; }
 any::~any() { delete content; }
 
@@ -13,10 +13,10 @@ const std::type_info& any::type() const {
     else return typeid(void);
 }
 
-any& any::operator=(any& a) {
+any& any::operator=(const any& a) {
     delete content;
 
-    content = a.content->clone();
+    content = a.empty() ? 0 : a.content->clone();
 
     return *this;
 }

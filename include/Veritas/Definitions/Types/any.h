@@ -7,12 +7,13 @@ namespace Veritas {
     class any {
         public:
             any();
-            any(any& any);
+            any(const any& any);
             any(any&& any);
-            template<class T> any(T&& t)                          :content(new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t))) {}
+            template <class T> any(const T& t)                     :content(new TContent<T>(t)) {}
+            template <class T> any(T&& t)                          :content(new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t))) {}
             ~any();
 
-            any& operator=(any& any);
+            any& operator=(const any& any);
             any& operator=(any&& any);
             template<class T> any& operator=(const T& t)         { delete content; content = new TContent<T>(t); return *this; }
             template<class T> any& operator=(T&& t)              { delete content; content = new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t)); return *this; }
@@ -35,7 +36,7 @@ namespace Veritas {
             template <class T>
             class TContent : public Content {
                 public:
-                    TContent(T& t) { content = new T(t); }
+                    TContent(const T& t) { content = new T(t); }
                     TContent(T&& t) { content = new T(std::move(t)); }
                     ~TContent() { delete (T*) content; }
 
