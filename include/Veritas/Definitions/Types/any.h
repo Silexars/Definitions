@@ -2,6 +2,7 @@
 
 #include <typeinfo>
 #include <utility>
+#include <type_traits>
 
 namespace Veritas {
     class any {
@@ -9,14 +10,12 @@ namespace Veritas {
             any();
             any(const any& any);
             any(any&& any);
-            template <class T> any(const T& t)                     :content(new TContent<T>(t)) {}
-            template <class T> any(T&& t)                          :content(new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t))) {}
+            template <class T> any(T&& t, typename std::enable_if<!std::is_same<any&, T>::value, bool>::type = false) : content(new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t))) {}
             ~any();
 
             any& operator=(const any& any);
             any& operator=(any&& any);
-            template<class T> any& operator=(const T& t)         { delete content; content = new TContent<T>(t); return *this; }
-            template<class T> any& operator=(T&& t)              { delete content; content = new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t)); return *this; }
+            template<class T> typename std::enable_if<!std::is_same<any&, T>::value, any>::type& operator=(T&& t) { delete content; content = new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t)); return *this; }
 
             void clear();
             void swap(any& any);
