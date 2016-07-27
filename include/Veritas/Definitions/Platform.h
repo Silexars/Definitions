@@ -9,9 +9,9 @@
     #elif TARGET_OS_MAC
         #define PLATFORM_MACOS PLATFORM_MACOS
     #endif
-#elif defined(__ANDROID__)
+#elif defined(__ANDROID__) || defined(ANDROID)
     #define PLATFORM_ANDROID PLATFORM_ANDROID
-#elif defined(EMSCRIPTEN)
+#elif defined(EMSCRIPTEN) || defined(__EMSCRIPTEN__)
     #define PLATFORM_EMSCRIPTEN
 #elif defined(__linux)
     #define PLATFORM_LINUX PLATFORM_LINUX
@@ -23,10 +23,10 @@
 
 #if defined(PLATFORM_ANDROID) || defined(PLATFORM_IOS)
     #define PLATFORM_MOBILE
+#elif defined(PLATFORM_EMSCRIPTEN)
+    #define PLATFORM_BROWSER
 #elif defined(PLATFORM_WINDOWS) || defined(PLATFORM_MACOS) || defined(PLATFORM_LINUX)
     #define PLATFORM_DESKTOP
-#elif defined(JAVASCRIPT)
-    #define PLATFORM_BROWSER
 #endif
 
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS) || defined(PLATFORM_ANDROID)
