@@ -1,7 +1,7 @@
 #pragma once
 
 #if defined(_WIN32) || defined(_WIN64)
-    #define PLATORM_WINDOWS PLATORM_WINDOWS
+    #define PLATFORM_WINDOWS PLATFORM_WINDOWS
 #elif __APPLE__
     #include "TargetConditionals.h"
     #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
