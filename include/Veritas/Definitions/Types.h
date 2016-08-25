@@ -50,3 +50,6 @@ typedef float32 f32;
 typedef float64 f64;
 
 #include "Types/any.h"
+#include "Types/any_args.h"
+#include "Types/any_function.h"
+#include "Types/any_method.h"
