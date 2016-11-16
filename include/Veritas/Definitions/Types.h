@@ -14,13 +14,7 @@ typedef int16_t     int16;
 typedef int32_t     int32;
 typedef int64_t     int64;
 
-#if TARGET_WORD == 32
-typedef uint32 Handle;
-#elif TARGET_WORD == 64
-typedef uint64 Handle;
-#else
-    #error Need defines.
-#endif
+typedef uintptr_t Handle;
 
 // float16
 typedef float               float32;
