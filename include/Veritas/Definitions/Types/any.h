@@ -51,6 +51,6 @@ namespace Veritas {
             Content* content;
     };
 
-    template <class T> const T& any_cast(const any& a) { return *((T*) a.content->content); }
+    template <class T> T& any_cast(const any& a) { return *((T*) a.content->content); }
     template <class T> T* any_cast(const any* a) { return (T*) a->content->content; }
 }
