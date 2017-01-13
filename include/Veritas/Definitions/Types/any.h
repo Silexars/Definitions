@@ -37,7 +37,7 @@ namespace Veritas {
             template <class T>
             class TContent : public Content {
                 public:
-                    TContent(const T& t) { content = new T(t); }
+                    TContent(const T& t) { content = (void*) new T(t); }
                     TContent(T&& t) { content = new T(std::move(t)); }
                     ~TContent() { delete (T*) content; }
 
@@ -46,11 +46,11 @@ namespace Veritas {
                     const std::type_info& type() const { return typeid(T); }
             };
 
-            template <class T> friend T any_cast(const any& a);
+            template <class T> friend T& any_cast(const any& a);
             template <class T> friend T* any_cast(const any* a);
             Content* content;
     };
 
-    template <class T> T any_cast(const any& a) { return *((T*) a.content->content); }
+    template <class T> const T& any_cast(const any& a) { return *((T*) a.content->content); }
     template <class T> T* any_cast(const any* a) { return (T*) a->content->content; }
 }
