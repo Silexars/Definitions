@@ -10,18 +10,21 @@ namespace Veritas {
             any();
             any(const any& any);
             any(any&& any);
-            template <class T> any(T&& t, typename std::enable_if<!std::is_same<any&, T>::value, bool>::type = false) : content(new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t))) {}
+            template <class T> any(T&& t, typename std::enable_if<!std::is_same<any&, T>::value, bool>::type = false) : content(new TypedContent<typename std::remove_reference<T>::type>(std::forward<T>(t))) {}
             ~any();
 
             any& operator=(const any& any);
             any& operator=(any&& any);
-            template<class T> typename std::enable_if<!std::is_same<any&, T>::value, any>::type& operator=(T&& t) { delete content; content = new TContent<typename std::remove_reference<T>::type>(std::forward<T>(t)); return *this; }
+            template<class T> typename std::enable_if<!std::is_same<any&, T>::value, any>::type& operator=(T&& t) { delete content; content = new TypedContent<typename std::remove_reference<T>::type>(std::forward<T>(t)); return *this; }
 
             void clear();
             void swap(any& any);
 
             bool empty() const;
             const std::type_info& type() const;
+
+            template <class T> T cast() { return *(typename std::remove_reference<T>::type*) content->content; }
+            template <class T> T cast() const { return *(typename std::remove_reference<T>::type*) content->content; }
         private:
             class Content {
                 public:
@@ -34,23 +37,23 @@ namespace Veritas {
                     void *content;
             };
 
-            template <class T>
-            class TContent : public Content {
+            template <class ContentType>
+            class TypedContent : public Content {
                 public:
-                    TContent(const T& t) { content = (void*) new T(t); }
-                    TContent(T&& t) { content = new T(std::move(t)); }
-                    ~TContent() { delete (T*) content; }
+                    TypedContent(const ContentType& t) { content = (void*) new ContentType(t); }
+                    TypedContent(TypedContent&& t) { content = new ContentType(std::move(t)); }
+                    ~TypedContent() { delete (ContentType*) content; }
 
-                    Content* clone() const { return new TContent(*((T*) content)); }
+                    Content* clone() const { return new TypedContent(*((ContentType*) content)); }
 
-                    const std::type_info& type() const { return typeid(T); }
+                    const std::type_info& type() const { return typeid(ContentType); }
+
+                    template <class CastType>
+                    CastType& cast() { return *(CastType*) content; }
             };
-
-            template <class T> friend T& any_cast(const any& a);
-            template <class T> friend T* any_cast(const any* a);
             Content* content;
     };
 
-    template <class T> T& any_cast(const any& a) { return *((T*) a.content->content); }
-    template <class T> T* any_cast(const any* a) { return (T*) a->content->content; }
+    template <class T> T any_cast(any& a) { return a.cast<T>(); }
+    template <class T> T any_cast(const any& a) { return a.cast<T>(); }
 }
